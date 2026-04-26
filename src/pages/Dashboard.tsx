@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Timer, Flame, Target, TrendingUp, AlertOctagon, Trophy } from "lucide-react";
+import { Loader2, Timer, Flame, Target, TrendingUp, AlertOctagon, Trophy, Star, Award } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip,
   PieChart, Pie, Cell,
@@ -42,6 +42,7 @@ const DashboardPage = () => {
   const [distractions, setDistractions] = useState<DistractionRow[]>([]);
   const [goalMinutes, setGoalMinutes] = useState(60);
   const [username, setUsername] = useState<string>("");
+  const [points, setPoints] = useState<number>(0);
 
   useEffect(() => { document.title = "FocusTrack — Dashboard"; }, []);
 
@@ -54,12 +55,15 @@ const DashboardPage = () => {
         supabase.from("sessions").select("id,start_time,end_time,duration_minutes,status").eq("user_id", user.id).gte("start_time", since.toISOString()).order("start_time", { ascending: false }),
         supabase.from("distractions").select("reason,created_at").eq("user_id", user.id).gte("created_at", since.toISOString()),
         supabase.from("goals").select("daily_minutes").eq("user_id", user.id).maybeSingle(),
-        supabase.from("profiles").select("username").eq("id", user.id).maybeSingle(),
+        supabase.from("profiles").select("username,points_balance").eq("id", user.id).maybeSingle(),
       ]);
       setSessions((s.data ?? []) as SessionRow[]);
       setDistractions((d.data ?? []) as DistractionRow[]);
       if (g.data) setGoalMinutes(g.data.daily_minutes);
-      if (p.data) setUsername(p.data.username);
+      if (p.data) {
+        setUsername(p.data.username);
+        setPoints(p.data.points_balance ?? 0);
+      }
       setLoading(false);
     };
     load();
@@ -119,8 +123,21 @@ const DashboardPage = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={Timer} label="Today" value={`${todayMin}m`} sub={`Goal: ${goalMinutes}m`} />
         <StatCard icon={TrendingUp} label="This week" value={`${weekMin}m`} sub={`${successful.length} sessions`} />
-        <StatCard icon={Trophy} label="Success rate" value={`${successRate}%`} sub={`${successful.length}/${totalCompleted || 0}`} />
+        <StatCard icon={Star} label="Points" value={`${points}`} sub={<Link to="/app/rewards" className="text-primary hover:underline">View rewards →</Link>} />
         <StatCard icon={Flame} label="Streak" value={`${streak}`} sub={streak === 1 ? "day" : "days"} />
+      </div>
+
+      {/* Streak badges */}
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div className="mb-4 flex items-center gap-2">
+          <Award className="h-4 w-4 text-muted-foreground" />
+          <p className="text-sm font-medium text-muted-foreground">Streak badges</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <BadgeTile name="Bronze" days={3} earned={streak >= 3} color="from-amber-700 to-amber-500" />
+          <BadgeTile name="Silver" days={7} earned={streak >= 7} color="from-slate-400 to-slate-200" />
+          <BadgeTile name="Gold" days={30} earned={streak >= 30} color="from-yellow-500 to-yellow-300" />
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
@@ -132,7 +149,7 @@ const DashboardPage = () => {
           {goalPct >= 100 ? (
             <span className="rounded-full bg-success/15 px-3 py-1 text-sm font-medium text-success">Achieved 🎉</span>
           ) : (
-            <Link to="/goals"><Button variant="outline" size="sm"><Target className="mr-2 h-4 w-4" />Adjust</Button></Link>
+            <Link to="/app/goals"><Button variant="outline" size="sm"><Target className="mr-2 h-4 w-4" />Adjust</Button></Link>
           )}
         </div>
         <Progress value={goalPct} className="h-2" />
@@ -193,7 +210,7 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <Link to="/focus">
+      <Link to="/app/focus">
         <Button size="lg" className="w-full bg-gradient-primary md:w-auto">
           <Timer className="mr-2 h-4 w-4" /> Start a focus session
         </Button>
@@ -202,14 +219,28 @@ const DashboardPage = () => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, sub }: { icon: typeof Timer; label: string; value: string; sub: string }) => (
+const StatCard = ({ icon: Icon, label, value, sub }: { icon: typeof Timer; label: string; value: string; sub: React.ReactNode }) => (
   <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
     <div className="flex items-center justify-between">
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
       <Icon className="h-4 w-4 text-muted-foreground" />
     </div>
     <p className="mt-2 text-3xl font-semibold tracking-tight">{value}</p>
-    <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
+    <div className="mt-1 text-xs text-muted-foreground">{sub}</div>
+  </div>
+);
+
+const BadgeTile = ({ name, days, earned, color }: { name: string; days: number; earned: boolean; color: string }) => (
+  <div className={`rounded-xl border p-4 transition-base ${earned ? "border-primary/30 bg-accent" : "border-border bg-muted/40"}`}>
+    <div className="flex items-center gap-3">
+      <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${color} ${earned ? "" : "opacity-30 grayscale"} shadow-soft`}>
+        <Trophy className="h-5 w-5 text-white" />
+      </div>
+      <div>
+        <p className={`font-semibold ${earned ? "text-foreground" : "text-muted-foreground"}`}>{name}</p>
+        <p className="text-xs text-muted-foreground">{earned ? "Earned" : `${days}-day streak`}</p>
+      </div>
+    </div>
   </div>
 );
 

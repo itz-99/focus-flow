@@ -71,18 +71,24 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          parent_pin_hash: string | null
+          points_balance: number
           updated_at: string
           username: string
         }
         Insert: {
           created_at?: string
           id: string
+          parent_pin_hash?: string | null
+          points_balance?: number
           updated_at?: string
           username: string
         }
         Update: {
           created_at?: string
           id?: string
+          parent_pin_hash?: string | null
+          points_balance?: number
           updated_at?: string
           username?: string
         }
@@ -139,11 +145,36 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawals: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      award_session_points: { Args: { _points: number }; Returns: number }
       get_leaderboard: {
         Args: never
         Returns: {
@@ -158,6 +189,11 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      set_parent_pin: { Args: { _pin: string }; Returns: boolean }
+      withdraw_points: {
+        Args: { _amount: number; _note?: string; _pin: string }
+        Returns: number
       }
     }
     Enums: {
