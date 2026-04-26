@@ -1,14 +1,15 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Timer, Trophy, Target, LogOut, Brain } from "lucide-react";
+import { LayoutDashboard, Timer, Trophy, Target, LogOut, Brain, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/focus", label: "Focus", icon: Timer },
-  { to: "/goals", label: "Goals", icon: Target },
-  { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/app/focus", label: "Focus", icon: Timer },
+  { to: "/app/rewards", label: "Rewards", icon: Star },
+  { to: "/app/goals", label: "Goals", icon: Target },
+  { to: "/app/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
 
 export const AppShell = () => {
@@ -17,7 +18,7 @@ export const AppShell = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth");
+    navigate("/");
   };
 
   return (
@@ -41,7 +42,7 @@ export const AppShell = () => {
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {nav.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
@@ -49,7 +50,7 @@ export const AppShell = () => {
               end={end}
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center gap-1 py-3 text-xs transition-base",
+                  "flex flex-col items-center gap-1 py-3 text-[11px] transition-base",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )
               }
