@@ -37,7 +37,7 @@ export const AppShell = () => {
         </div>
       </header>
 
-      <main className="container py-6 pb-28 md:pb-10">
+      <main className="container py-6 pb-28 md:pb-10 md:pt-24">
         <Outlet />
       </main>
 
