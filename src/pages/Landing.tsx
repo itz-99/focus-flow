@@ -134,8 +134,8 @@ const Landing = () => {
       {/* CTA */}
       <section className="container py-20">
         <div className="overflow-hidden rounded-3xl border border-border bg-card p-10 text-center shadow-soft md:p-16">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary shadow-soft">
-            <Sparkles className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+            <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
             Ready to focus?
