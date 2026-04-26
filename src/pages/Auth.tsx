@@ -37,7 +37,7 @@ const AuthPage = () => {
   }, []);
 
   if (loading) return null;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/app" replace />;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ const AuthPage = () => {
       toast.error(error.message);
       return;
     }
-    navigate("/");
+    navigate("/app");
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -78,7 +78,7 @@ const AuthPage = () => {
       return;
     }
     toast.success("Account created — welcome!");
-    navigate("/");
+    navigate("/app");
   };
 
   return (
