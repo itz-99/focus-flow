@@ -62,7 +62,7 @@ export const AppShell = () => {
         </div>
       </nav>
 
-      <nav className="fixed left-1/2 top-20 z-30 hidden -translate-x-1/2 md:block">
+      <nav className="fixed left-1/2 top-24 z-30 hidden -translate-x-1/2 md:block">
         <div className="flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-soft">
           {nav.map(({ to, label, icon: Icon, end }) => (
             <NavLink
