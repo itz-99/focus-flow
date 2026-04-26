@@ -79,7 +79,15 @@ const FocusPage = () => {
       end_time: new Date().toISOString(),
       tab_switches: switchesRef.current,
     }).eq("id", sid);
-    toast.success("🎉 Session complete!", { description: `${duration} minutes of pure focus.` });
+    // Award 10 points
+    const { data: newBalance, error } = await supabase.rpc("award_session_points", { _points: 10 });
+    if (error) {
+      toast.success("🎉 Session complete!", { description: `${duration} min of focus.` });
+    } else {
+      toast.success("🎉 +10 points earned!", {
+        description: `${duration} min of focus · Balance: ${newBalance} pts`,
+      });
+    }
   };
 
   // Visibility / blur listeners — only active during a session
