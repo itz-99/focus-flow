@@ -44,8 +44,7 @@ const Landing = () => {
               <Sparkles className="h-3.5 w-3.5" /> Built for students
             </span>
             <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
-              Beat phone distraction.<br />
-              <span className="bg-gradient-primary bg-clip-text text-transparent">Earn real rewards.</span>
+              Beat phone distraction.
             </h1>
             <p className="max-w-lg text-lg text-muted-foreground">
               Run focus sessions, build streaks, and collect points your parents can turn into real rewards. Stay in flow — we handle the rest.
